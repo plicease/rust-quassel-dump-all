@@ -25,8 +25,8 @@ enum OutputFormat {
 #[command(name = "quassel-dump-all", version, about)]
 struct Cli {
     /// Quassel username whose logs will be dumped
-    #[arg(short = 'u', long)]
-    user: String,
+    #[arg(short = 'u', long, required_unless_present = "easter_egg")]
+    user: Option<String>,
 
     /// Output directory (a subdirectory is created per network)
     #[arg(short = 'o', long, default_value = "quassel-dump-all-out")]
@@ -71,6 +71,9 @@ struct Cli {
     /// PostgreSQL database name
     #[arg(long, requires = "postgres")]
     pg_dbname: Option<String>,
+
+    #[arg(long, hide = true, exclusive = true)]
+    easter_egg: bool,
 }
 
 fn open_db(cli: &Cli) -> Result<Box<dyn QuasselDb>> {
@@ -142,21 +145,28 @@ fn write_channel_log(
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
+    if cli.easter_egg {
+        eprintln!("Oh you are replacing me?");
+        std::process::exit(1);
+    }
+
     if cli.channel.is_some() && cli.network.is_none() {
         bail!("--channel requires --network");
     }
 
+    let user = cli.user.clone().expect("required unless --easter-egg");
+
     let mut db = open_db(&cli)?;
 
     let user_id = db
-        .user_id(&cli.user)?
-        .ok_or_else(|| anyhow!("user '{}' not found in the database", cli.user))?;
+        .user_id(&user)?
+        .ok_or_else(|| anyhow!("user '{}' not found in the database", user))?;
 
     let mut networks = db.networks(user_id)?;
     if let Some(wanted) = &cli.network {
         networks.retain(|n| &n.name == wanted);
         if networks.is_empty() {
-            bail!("network '{wanted}' not found for user '{}'", cli.user);
+            bail!("network '{wanted}' not found for user '{}'", user);
         }
     }
 
@@ -201,7 +211,7 @@ fn main() -> Result<()> {
             "channel '{}' not found in network '{}' for user '{}'",
             channel,
             cli.network.unwrap(),
-            cli.user
+            user
         );
     }
 
