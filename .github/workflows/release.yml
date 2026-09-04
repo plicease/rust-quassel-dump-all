@@ -152,6 +152,27 @@ jobs:
           cp README.md LICENSE "$name/"
           7z a "${name}.zip" "$name"
           echo "ASSET=${name}.zip" >> "$GITHUB_ENV"
+          echo "STAGEDIR=$name" >> "$GITHUB_ENV"
+
+      - name: Build Windows installer (NSIS)
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          bits=64
+          [[ "${{ matrix.target }}" == i686-* ]] && bits=32
+          installer="quassel-dump-all-v${VERSION}-${{ matrix.target }}-installer.exe"
+          makensis \
+            "-DVERSION=$VERSION" \
+            "-DBITS=$bits" \
+            "-DSRCDIR=$(cygpath -w "$(pwd)/$STAGEDIR")" \
+            "-DOUTFILE=$(cygpath -w "$(pwd)/$installer")" \
+            packaging/windows/installer.nsi
+          echo "INSTALLER_ASSET=$installer" >> "$GITHUB_ENV"
+
+      - name: Upload Windows installer
+        if: runner.os == 'Windows'
+        shell: bash
+        run: gh release upload "v$VERSION" "$INSTALLER_ASSET" --repo "$GITHUB_REPOSITORY" --clobber
 
       - name: Upload asset
         shell: bash
