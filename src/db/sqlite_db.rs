@@ -22,9 +22,7 @@ impl QuasselDb for SqliteDb {
         let mut stmt = self
             .conn
             .prepare("SELECT userid FROM quasseluser WHERE username = ?1")?;
-        let id = stmt
-            .query_row([username], |row| row.get::<_, i64>(0))
-            .ok();
+        let id = stmt.query_row([username], |row| row.get::<_, i64>(0)).ok();
         Ok(id)
     }
 

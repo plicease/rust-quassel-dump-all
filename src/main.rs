@@ -104,7 +104,9 @@ fn open_db(cli: &Cli) -> Result<Box<dyn QuasselDb>> {
             };
             Ok(Box::new(PostgresDb::connect(&cfg)?))
         }
-        (None, false) => bail!("specify a database with either --sqlite <path> or --postgres (plus --pg-user/--pg-dbname/etc.)"),
+        (None, false) => bail!(
+            "specify a database with either --sqlite <path> or --postgres (plus --pg-user/--pg-dbname/etc.)"
+        ),
     }
 }
 
@@ -167,7 +169,8 @@ fn main() -> Result<()> {
     for network in &networks {
         let mut buffers = db.buffers(user_id, network.id)?;
         buffers.retain(|b| {
-            matches!(b.buffer_type, buffer_type::CHANNEL | buffer_type::QUERY) && !b.name.trim().is_empty()
+            matches!(b.buffer_type, buffer_type::CHANNEL | buffer_type::QUERY)
+                && !b.name.trim().is_empty()
         });
         if let Some(wanted) = &cli.channel {
             buffers.retain(|b| &b.name == wanted);

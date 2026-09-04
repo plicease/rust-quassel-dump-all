@@ -109,6 +109,19 @@ quassel-dump-all -u alice -n libera.chat -c '#perl' \
   --postgres --pg-host db.example.com --pg-user quassel --pg-dbname quassel
 ```
 
+## Releasing
+
+Bump the `version` in `Cargo.toml` (and run `cargo build` once to update
+`Cargo.lock`) in a PR, and merge it to `main`. Once merged, CI automatically:
+
+1. tags the merge commit `v<version>`,
+2. creates a GitHub release for that tag, and
+3. builds release binaries for Linux (x86_64, i686, ARM64), macOS (x86_64,
+   ARM64), and Windows (x86_64, i686), and uploads them to the release.
+
+No other action is needed — just don't bump the version until you're ready
+to publish a release.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).

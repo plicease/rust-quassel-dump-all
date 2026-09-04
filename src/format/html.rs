@@ -117,7 +117,11 @@ impl Renderer for HtmlRenderer {
                 time,
                 format!("*** {} sets mode: {}", escape(sender), escape(mode)),
             ),
-            Event::Join { nick, host, channel } => line(
+            Event::Join {
+                nick,
+                host,
+                channel,
+            } => line(
                 "join",
                 time,
                 format!(
@@ -177,7 +181,11 @@ impl Renderer for HtmlRenderer {
                 time,
                 format!("*** {} was killed ({})", escape(target), escape(reason)),
             ),
-            Event::TopicChange { user, channel, topic } => line(
+            Event::TopicChange {
+                user,
+                channel,
+                topic,
+            } => line(
                 "topic",
                 time,
                 format!(

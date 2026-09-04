@@ -26,9 +26,12 @@ impl PostgresDb {
         if let Some(password) = &cfg.password {
             config.password(password);
         }
-        let client = config
-            .connect(NoTls)
-            .with_context(|| format!("failed to connect to postgres database {}@{}:{}/{}", cfg.user, cfg.host, cfg.port, cfg.dbname))?;
+        let client = config.connect(NoTls).with_context(|| {
+            format!(
+                "failed to connect to postgres database {}@{}:{}/{}",
+                cfg.user, cfg.host, cfg.port, cfg.dbname
+            )
+        })?;
         Ok(Self { client })
     }
 }
