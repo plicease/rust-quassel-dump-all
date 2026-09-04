@@ -154,10 +154,15 @@ jobs:
           echo "ASSET=${name}.zip" >> "$GITHUB_ENV"
           echo "STAGEDIR=$name" >> "$GITHUB_ENV"
 
+      - name: Install NSIS
+        if: runner.os == 'Windows'
+        run: choco install nsis -y --no-progress
+
       - name: Build Windows installer (NSIS)
         if: runner.os == 'Windows'
         shell: bash
         run: |
+          export PATH="/c/Program Files (x86)/NSIS:$PATH"
           bits=64
           [[ "${{ matrix.target }}" == i686-* ]] && bits=32
           installer="quassel-dump-all-v${VERSION}-${{ matrix.target }}-installer.exe"
