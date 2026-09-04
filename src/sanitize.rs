@@ -21,7 +21,11 @@ pub fn sanitize_component(name: &str) -> String {
 
 /// Picks a filename for `name` (already sanitized as a component, extension
 /// appended) that doesn't collide with anything already in `used`.
-pub fn unique_filename(used: &mut std::collections::HashSet<String>, name: &str, extension: &str) -> String {
+pub fn unique_filename(
+    used: &mut std::collections::HashSet<String>,
+    name: &str,
+    extension: &str,
+) -> String {
     let base = sanitize_component(name);
     let mut candidate = format!("{base}.{extension}");
     let mut n = 2;

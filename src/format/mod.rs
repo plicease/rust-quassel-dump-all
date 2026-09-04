@@ -30,23 +30,76 @@ mod msg_type {
 
 /// A classified backlog row, ready to be rendered by a `Renderer`.
 pub enum Event<'a> {
-    Message { sender: &'a str, text: &'a str },
-    Notice { sender: &'a str, text: &'a str },
-    Action { sender: &'a str, text: &'a str },
-    NickChange { old: &'a str, new: &'a str },
-    ModeChange { sender: &'a str, mode: &'a str },
-    Join { nick: &'a str, host: &'a str, channel: &'a str },
-    Part { nick: &'a str, host: &'a str, channel: &'a str, reason: Option<&'a str> },
-    Quit { nick: &'a str, host: &'a str, reason: &'a str },
-    Kick { target: &'a str, by: &'a str, reason: Option<&'a str> },
-    Kill { target: &'a str, reason: &'a str },
-    TopicChange { user: &'a str, channel: &'a str, topic: &'a str },
-    TopicJoin1 { channel: &'a str, topic: &'a str },
-    TopicJoin2 { user: &'a str, logtime: &'a str },
-    Server { text: &'a str },
-    Info { text: &'a str },
-    Error { text: &'a str },
-    DayChange { text: &'a str },
+    Message {
+        sender: &'a str,
+        text: &'a str,
+    },
+    Notice {
+        sender: &'a str,
+        text: &'a str,
+    },
+    Action {
+        sender: &'a str,
+        text: &'a str,
+    },
+    NickChange {
+        old: &'a str,
+        new: &'a str,
+    },
+    ModeChange {
+        sender: &'a str,
+        mode: &'a str,
+    },
+    Join {
+        nick: &'a str,
+        host: &'a str,
+        channel: &'a str,
+    },
+    Part {
+        nick: &'a str,
+        host: &'a str,
+        channel: &'a str,
+        reason: Option<&'a str>,
+    },
+    Quit {
+        nick: &'a str,
+        host: &'a str,
+        reason: &'a str,
+    },
+    Kick {
+        target: &'a str,
+        by: &'a str,
+        reason: Option<&'a str>,
+    },
+    Kill {
+        target: &'a str,
+        reason: &'a str,
+    },
+    TopicChange {
+        user: &'a str,
+        channel: &'a str,
+        topic: &'a str,
+    },
+    TopicJoin1 {
+        channel: &'a str,
+        topic: &'a str,
+    },
+    TopicJoin2 {
+        user: &'a str,
+        logtime: &'a str,
+    },
+    Server {
+        text: &'a str,
+    },
+    Info {
+        text: &'a str,
+    },
+    Error {
+        text: &'a str,
+    },
+    DayChange {
+        text: &'a str,
+    },
     Other,
 }
 
@@ -97,10 +150,22 @@ pub fn classify<'a>(row: &'a BacklogRow, buffer_name: &'a str) -> Event<'a> {
     let (nick, host) = split_sender(&row.sender);
     let msg = row.message.as_str();
     match row.msg_type {
-        msg_type::PLAIN => Event::Message { sender: nick, text: msg },
-        msg_type::NOTICE => Event::Notice { sender: nick, text: msg },
-        msg_type::ACTION => Event::Action { sender: nick, text: msg },
-        msg_type::NICK => Event::NickChange { old: nick, new: msg },
+        msg_type::PLAIN => Event::Message {
+            sender: nick,
+            text: msg,
+        },
+        msg_type::NOTICE => Event::Notice {
+            sender: nick,
+            text: msg,
+        },
+        msg_type::ACTION => Event::Action {
+            sender: nick,
+            text: msg,
+        },
+        msg_type::NICK => Event::NickChange {
+            old: nick,
+            new: msg,
+        },
         msg_type::MODE => {
             let mode = match msg.split_once(' ') {
                 Some((_target, rest)) => rest,
@@ -110,7 +175,11 @@ pub fn classify<'a>(row: &'a BacklogRow, buffer_name: &'a str) -> Event<'a> {
         }
         msg_type::JOIN => {
             let channel = if msg.is_empty() { buffer_name } else { msg };
-            Event::Join { nick, host, channel }
+            Event::Join {
+                nick,
+                host,
+                channel,
+            }
         }
         msg_type::PART => {
             let channel = if msg.is_empty() { buffer_name } else { msg };
@@ -121,7 +190,11 @@ pub fn classify<'a>(row: &'a BacklogRow, buffer_name: &'a str) -> Event<'a> {
                 reason: None,
             }
         }
-        msg_type::QUIT => Event::Quit { nick, host, reason: msg },
+        msg_type::QUIT => Event::Quit {
+            nick,
+            host,
+            reason: msg,
+        },
         msg_type::KICK => {
             let (target, reason) = match msg.split_once(' ') {
                 Some((target, reason)) if !reason.is_empty() => (target, Some(reason)),

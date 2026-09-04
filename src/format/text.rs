@@ -36,7 +36,11 @@ impl Renderer for TextRenderer {
             Event::ModeChange { sender, mode } => {
                 format!("{ts} *** {sender} sets mode: {mode}\n")
             }
-            Event::Join { nick, host, channel } => {
+            Event::Join {
+                nick,
+                host,
+                channel,
+            } => {
                 format!("{ts} *** {nick} ({host}) has joined {channel}\n")
             }
             Event::Part {
@@ -62,7 +66,11 @@ impl Renderer for TextRenderer {
             Event::Kill { target, reason } => {
                 format!("{ts} *** {target} was killed ({reason})\n")
             }
-            Event::TopicChange { user, channel, topic } => {
+            Event::TopicChange {
+                user,
+                channel,
+                topic,
+            } => {
                 format!("{ts} *** {user} changes topic for {channel} to '{topic}'\n")
             }
             Event::TopicJoin1 { channel, topic } => {
