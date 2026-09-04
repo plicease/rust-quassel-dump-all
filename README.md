@@ -108,3 +108,7 @@ Dump only one channel on one network from a PostgreSQL-backed core:
 quassel-dump-all -u alice -n libera.chat -c '#perl' \
   --postgres --pg-host db.example.com --pg-user quassel --pg-dbname quassel
 ```
+
+## License
+
+MIT. See [LICENSE](LICENSE).
