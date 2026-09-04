@@ -3,6 +3,7 @@ name = "quassel-dump-all"
 version = "0.2.0"
 edition = "2024"
 license = "MIT"
+description = "Dumps a Quassel IRC user's logs into a plain directory tree of log files"
 
 [dependencies]
 clap = { version = "4", features = ["derive"] }
@@ -12,3 +13,21 @@ chrono = { version = "0.4", default-features = false, features = ["clock"] }
 rusqlite = { version = "0.32", features = ["bundled"] }
 postgres = "0.19"
 rpassword = "7"
+
+[package.metadata.deb]
+maintainer = "Graham Ollis <plicease@gmail.com>"
+copyright = "Graham Ollis"
+extended-description = """\
+Dumps a Quassel IRC user's logs out of a Quassel core database and into a \
+plain directory tree, one file per channel/query buffer, grouped into a \
+directory per network.
+
+Reads either a Quassel sqlite3 database file or connects directly to a \
+Quassel PostgreSQL database."""
+section = "utils"
+priority = "optional"
+assets = [
+    ["target/release/quassel-dump-all", "usr/bin/", "755"],
+    ["README.md", "usr/share/doc/quassel-dump-all/README.md", "644"],
+    ["LICENSE", "usr/share/doc/quassel-dump-all/LICENSE", "644"],
+]

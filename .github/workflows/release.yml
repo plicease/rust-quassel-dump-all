@@ -112,6 +112,25 @@ jobs:
       - name: Build
         run: cargo build --release --locked --target ${{ matrix.target }}
 
+      - name: Install cargo-deb
+        if: runner.os == 'Linux'
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deb
+
+      - name: Package Debian package
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          cargo deb --target ${{ matrix.target }} --no-build --no-strip
+          deb="$(find "target/${{ matrix.target }}/debian" -maxdepth 1 -name '*.deb')"
+          echo "DEB_ASSET=$deb" >> "$GITHUB_ENV"
+
+      - name: Upload Debian package
+        if: runner.os == 'Linux'
+        shell: bash
+        run: gh release upload "v$VERSION" "$DEB_ASSET" --repo "$GITHUB_REPOSITORY" --clobber
+
       - name: Package (Unix)
         if: runner.os != 'Windows'
         shell: bash
